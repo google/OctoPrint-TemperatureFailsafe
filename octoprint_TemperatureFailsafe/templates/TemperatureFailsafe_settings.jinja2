@@ -1,0 +1,69 @@
+<h4>{{ _('Temperature Failsafe Configuration') }}</h4>
+
+<br />
+<p>Configuration for the temperature failsafe.</p>
+<br />
+
+<form class="form-horizontal">
+     <div class="control-group">
+         <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.enabled">Enable Failsafe Actions
+        </label>
+    </div>
+
+    <label class="control-label">Polling Interval</label>
+    <div class="controls">
+        <div class="input-append">
+            <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.interval">
+            <span class="add-on">s</span>
+        </div>
+    </div>
+
+    <label class="control-label">Hotend Threshold</label>
+    <div class="controls">
+        <div class="input-append">
+            <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.hotend">
+            <span class="add-on">&deg;C</span>
+        </div>
+    </div>
+
+    <label class="control-label">Bed Threshold</label>
+    <div class="controls">
+        <div class="input-append">
+            <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.bed">
+            <span class="add-on">&deg;C</span>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="control-group">
+        <label class="control-label">Failsafe Shell Command</label>
+        <div class="controls">
+            <input type="text" class="input-block-level" data-bind="value: settings.plugins.TemperatureFailsafe.command">
+	    <span class="help-inline">This script will get executed every polling interval while the heater is over the threshold.</span>
+        </div>
+    </div>
+
+    <label class="control-label">Failsafe Command Timeout</label>
+    <div class="controls">
+        <div class="input-append">
+            <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.read_timeout">
+            <span class="add-on">s</span>
+        </div>
+    </div>
+
+    <br />
+
+    <div class="control-group">
+         <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.cancel_print">Cancel Print
+        </label>
+    </div>
+
+    <div class="control-group">
+         <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.disable_heaters">Disable Heaters
+        </label>
+    </div>
+</form>

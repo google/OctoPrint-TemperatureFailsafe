@@ -15,6 +15,8 @@ or manually using this URL:
 
 Configure the thresholds and commands via the OctoPrint settings UI.
 
+![TemperatureFailsafe](temperaturefailsafe_settings.png?raw=true)
+
 ## Disclaimer
 
 This is **not** an official Google product.

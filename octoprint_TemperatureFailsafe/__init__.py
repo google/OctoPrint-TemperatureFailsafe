@@ -105,7 +105,7 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 					env["TEMPERATURE_FAILSAFE_%s_TARGET" % t.upper()] = str(temps[t]['target'])
 
 				self._executeFailsafe(env)
-	
+
 	def on_after_startup(self):
 		self._logger.info(u"Starting up...")
 		self._restartTimer()
@@ -130,7 +130,9 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 		    interval=5,
 		    read_timeout=5,
 		    bed=0,
+		    bed_low=0,
 		    hotend=0,
+		    hotend_low=0,
 		    command=None,
 		    cancel_print=True,
 		    disable_heaters=True
@@ -142,7 +144,7 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 
 	def on_settings_save(self, data):
 		# make sure we don't get negative values
-		for k in ('bed', 'hotend', 'read_timeout', 'interval'):
+		for k in ('bed', 'bed_low', 'hotend', 'hotend_low', 'read_timeout', 'interval'):
 			if data.get(k): data[k] = max(0, int(data[k]))
 		self._logger.debug(u"TemperatureFailsafe on_settings_save(%r)" % (data,))
 

@@ -1,69 +1,86 @@
-<h4>{{ _('Temperature Failsafe Configuration') }}</h4>
-
-<br />
-<p>Configuration for the temperature failsafe.</p>
-<br />
-
 <form class="form-horizontal">
-     <div class="control-group">
-         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.enabled">Enable Failsafe Actions
+    <div class="controls">
+        <label class="checkbox">
+            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.enabled">
+            Enable
         </label>
     </div>
 
-    <label class="control-label">Polling Interval</label>
-    <div class="controls">
-        <div class="input-append">
-            <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.interval">
-            <span class="add-on">s</span>
-        </div>
-    </div>
-
-    <label class="control-label">Hotend Threshold</label>
-    <div class="controls">
-        <div class="input-append">
-            <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.hotend">
-            <span class="add-on">&deg;C</span>
-        </div>
-    </div>
-
-    <label class="control-label">Bed Threshold</label>
-    <div class="controls">
-        <div class="input-append">
-            <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.bed">
-            <span class="add-on">&deg;C</span>
-        </div>
-    </div>
-
-    <br />
-
+    <h3>Settings</h3>
     <div class="control-group">
-        <label class="control-label">Failsafe Shell Command</label>
+        <label class="control-label">Polling Interval</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.interval">
+                <span class="add-on">s</span>
+            </div>
+            <span class="help-inline">how frequently to check the temperatures</span>
+        </div>
+
+
+        <label class="control-label">Shell Command</label>
         <div class="controls">
             <input type="text" class="input-block-level" data-bind="value: settings.plugins.TemperatureFailsafe.command">
-	    <span class="help-inline">This script will get executed every polling interval while the heater is over the threshold.</span>
+            <span class="help-inline">This command will get executed every polling interval while the heater is outside the thresholds.</span>
+        </div>
+
+        <label class="control-label">Command Timeout</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.read_timeout">
+                <span class="add-on">s</span>
+            </div>
+        </div>
+
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.disable_heaters">
+                Disable heaters on violations
+            </label>
+        </div>
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.cancel_print">
+                Cancel active print on violations
+            </label>
         </div>
     </div>
 
-    <label class="control-label">Failsafe Command Timeout</label>
+    <h3>Hotend Thresholds</h3>
+    <p>If the hotend temperature falls outside of these thresholds, OctoPrint will execute the failsafe.</p>
+    <div class="control-group">
+        <label class="control-label">High</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.hotend">
+                <span class="add-on">&deg;C</span>
+            </div>
+        </div>
+        <label class="control-label">Low</label>
+        <div class="controls">
+            <div class="input-append">
+                <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.hotend_low">
+                <span class="add-on">&deg;C</span>
+            </div>
+        </div>
+    </div>
+
+    <h3>Bed Thresholds</h3>
+    <p>If the bed temperature falls outside of these thresholds, OctoPrint will execute the failsafe.</p>
+    <label class="control-label">High</label>
     <div class="controls">
         <div class="input-append">
-            <input type="number" step="any" min="1" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.read_timeout">
-            <span class="add-on">s</span>
+        <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.bed">
+            <span class="add-on">&deg;C</span>
+        </div>
+    </div>
+    <label class="control-label">Low</label>
+    <div class="controls">
+        <div class="input-append">
+            <input type="number" step="any" min="0" class="input-mini text-right" data-bind="value: settings.plugins.TemperatureFailsafe.bed_low">
+            <span class="add-on">&deg;C</span>
         </div>
     </div>
 
-    <br />
 
-    <div class="control-group">
-         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.cancel_print">Cancel Print
-        </label>
-    </div>
-
-    <div class="control-group">
-         <label class="checkbox">
-            <input type="checkbox" data-bind="checked: settings.plugins.TemperatureFailsafe.disable_heaters">Disable Heaters
-        </label>
-    </div>
 </form>

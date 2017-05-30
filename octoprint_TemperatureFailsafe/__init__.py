@@ -22,10 +22,10 @@ from octoprint.util import RepeatedTimer
 from easyprocess import EasyProcess
 
 class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
-			  octoprint.plugin.SettingsPlugin,
-			  octoprint.plugin.ShutdownPlugin,
-			  octoprint.plugin.StartupPlugin,
-			  octoprint.plugin.TemplatePlugin):
+						  octoprint.plugin.SettingsPlugin,
+						  octoprint.plugin.ShutdownPlugin,
+						  octoprint.plugin.StartupPlugin,
+						  octoprint.plugin.TemplatePlugin):
 
 	def __init__(self):
 		self._checkTempTimer = None
@@ -88,16 +88,28 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 			#   'tool1': {'actual': 0.0, 'target': 0.0, 'offset': 0}
 			# }
 			if k == 'bed':
-				threshold = self._settings.get_int(['bed'])
+				threshold_high = self._settings.get_int(['bed'])
+				threshold_low = self._settings.get_int(['bed_low'])
 			else:
-				threshold = self._settings.get_int(['hotend'])
+				threshold_high = self._settings.get_int(['hotend'])
+				threshold_low = self._settings.get_int(['hotend_low'])
 
-			if threshold and temps[k]['actual'] > threshold:
-				self._logger.error(u"Temperature threshold exceeded %s: %sC > %sC" % (k, temps[k]['actual'], threshold))
+			violation = False
+			errmsg = u"TemperatureFailSafe violation, heater: {heater}: {temp}C {exp} {threshold}C"
+			if threshold_high and temps[k]['actual'] > threshold_high:
+				self._logger.error(errmsg.format(heater=k, temp=temps[k]['actual'], exp=">", threshold=threshold_high))
+				violation = True
 
+			# only check the low thresholds if we are currently printing, or else ignore it
+			if self._printer.is_printing() and threshold_low and temps[k]['actual'] < threshold_low:
+				self._logger.error(errmsg.format(heater=k, temp=temps[k]['actual'], exp="<", threshold=threshold_low))
+				violation = True
+
+			if violation:
 				env = {}
 				env["TEMPERATURE_FAILSAFE_FAULT_TOOL"] = str(k)
-				env["TEMPERATURE_FAILSAFE_FAULT_THRESHOLD"] = str(threshold)
+				env["TEMPERATURE_FAILSAFE_FAULT_HIGH_THRESHOLD"] = str(threshold_high)
+				env["TEMPERATURE_FAILSAFE_FAULT_LOW_THRESHOLD"] = str(threshold_low)
 
 				# place the temperatures into an environment dictionary to pass to the remote program
 				for t in temps.keys():
@@ -105,7 +117,7 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 					env["TEMPERATURE_FAILSAFE_%s_TARGET" % t.upper()] = str(temps[t]['target'])
 
 				self._executeFailsafe(env)
-	
+
 	def on_after_startup(self):
 		self._logger.info(u"Starting up...")
 		self._restartTimer()
@@ -130,7 +142,9 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 		    interval=5,
 		    read_timeout=5,
 		    bed=0,
+		    bed_low=0,
 		    hotend=0,
+		    hotend_low=0,
 		    command=None,
 		    cancel_print=True,
 		    disable_heaters=True
@@ -142,7 +156,7 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 
 	def on_settings_save(self, data):
 		# make sure we don't get negative values
-		for k in ('bed', 'hotend', 'read_timeout', 'interval'):
+		for k in ('bed', 'bed_low', 'hotend', 'hotend_low', 'read_timeout', 'interval'):
 			if data.get(k): data[k] = max(0, int(data[k]))
 		self._logger.debug(u"TemperatureFailsafe on_settings_save(%r)" % (data,))
 

@@ -97,15 +97,19 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 			violation = False
 			errmsg = u"TemperatureFailSafe violation, heater: {heater}: {temp}C {exp} {threshold}C"
 			if threshold_high and temps[k]['actual'] > threshold_high:
-				self._logger.error(errmsg.format(heater=k, temp=temps[k]['actual'], exp=">", threshold=threshold_high))
+				errmsg = errmsg.format(heater=k, temp=temps[k]['actual'], exp=">", threshold=threshold_high)
 				violation = True
 
 			# only check the low thresholds if we are currently printing, or else ignore it
 			if self._printer.is_printing() and threshold_low and temps[k]['actual'] < threshold_low:
-				self._logger.error(errmsg.format(heater=k, temp=temps[k]['actual'], exp="<", threshold=threshold_low))
+				errmsg = errmsg.format(heater=k, temp=temps[k]['actual'], exp="<", threshold=threshold_low)
 				violation = True
 
 			if violation:
+				# alert the user
+				self._logger.error(errmsg)
+				self._plugin_manager.send_plugin_message(__plugin_name__, dict(type="popup", msg=errmsg))
+
 				env = {}
 				env["TEMPERATURE_FAILSAFE_FAULT_TOOL"] = str(k)
 				env["TEMPERATURE_FAILSAFE_FAULT_HIGH_THRESHOLD"] = str(threshold_high)
@@ -118,13 +122,22 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 
 				self._executeFailsafe(env)
 
+	##-- StartupPlugin hooks
+
 	def on_after_startup(self):
 		self._logger.info(u"Starting up...")
 		self._restartTimer()
 
+	##-- ShutdownPlugin hooks
+
 	def on_shutdown(self):
 		self._logger.info(u"Shutting down...")
 		# RepeatedTimer is a daemon thread, and won't block process exit?
+
+	##-- AssetPlugin hooks
+
+	def get_assets(self):
+		return dict(js=["js/Temperaturefailsafe.js"])
 
 	##~~ SettingsPlugin mixin
 
@@ -183,7 +196,7 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 			)
 		)
 
-__plugin_name__ = "Temperature Failsafe"
+__plugin_name__ = "TemperatureFailsafe"
 
 def __plugin_load__():
 	global __plugin_implementation__

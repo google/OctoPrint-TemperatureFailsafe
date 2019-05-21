@@ -90,9 +90,11 @@ class TemperatureFailsafe(octoprint.plugin.AssetPlugin,
 			if k == 'bed':
 				threshold_high = self._settings.get_int(['bed'])
 				threshold_low = self._settings.get_int(['bed_low'])
-			else:
+			elif k.startswith('tool'):
 				threshold_high = self._settings.get_int(['hotend'])
 				threshold_low = self._settings.get_int(['hotend_low'])
+			else:
+				continue
 
 			violation = False
 			errmsg = u"TemperatureFailSafe violation, heater: {heater}: {temp}C {exp} {threshold}C"

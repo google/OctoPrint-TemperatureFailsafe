@@ -18,7 +18,7 @@
 plugin_identifier = "TemperatureFailsafe"
 plugin_package = "octoprint_TemperatureFailsafe"
 plugin_name = "OctoPrint-TemperatureFailsafe"
-plugin_version = "0.2.1"
+plugin_version = "0.2.2"
 plugin_description = """OctoPrint plugin to execute a shell command on temperature threshold violations"""
 plugin_author = "Uriah Welcome"
 plugin_author_email = "uriah@google.com"
